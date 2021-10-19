@@ -22,11 +22,7 @@ router.post(
 	isAuth,
 	async (req: Request, res: Response, _next: NextFunction) => {
 		try {
-			const {
-				user: { id: ownerId },
-				title,
-				text,
-			} = req.body
+			const { userId: ownerId, title, text } = req.body
 			const post = await PostController.addPost({ ownerId, title, text })
 			return res.json(post)
 		} catch (error) {

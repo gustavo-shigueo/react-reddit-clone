@@ -46,5 +46,6 @@ a:any-link {
 }
 
 body {
-	background-color: var(--color-neutral-150);
+	background-color: var(--color-neutral-500);
+	color: var(--color-neutral-100);
 }

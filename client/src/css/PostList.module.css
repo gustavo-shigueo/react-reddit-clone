@@ -1,0 +1,71 @@
+.postList {
+	display: grid;
+	width: 100%;
+	align-items: center;
+	grid-template-columns: 1rem repeat(12, 1fr) 1rem;
+	row-gap: 2rem;
+	column-gap: 1rem;
+	margin-top: 3rem;
+}
+
+.postCard {
+	grid-column: 2 / -2;
+	display: grid;
+	background-color: var(--color-neutral-450);
+	padding: 1rem 2rem;
+	box-shadow: 0 5px 8px rgba(0, 0, 0, 0.5);
+	border-radius: 20px;
+}
+
+.postHeader p {
+	margin-bottom: 1rem;
+	font-size: 1rem;
+}
+
+.postBody h4 {
+	font-size: 1.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.postBody h4 {
+	font-size: 1.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.postButtons {
+	display: flex;
+	gap: 0.75rem;
+	font-size: 1.25rem;
+	align-items: center;
+}
+
+.postButtons button {
+	font-size: 1.25rem;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.postButtons button * {
+	pointer-events: none;
+}
+
+@media (min-width: 800px) {
+	.postCard {
+		grid-template-columns: 3rem 1fr;
+	}
+
+	.postCard > * {
+		grid-column: 2;
+	}
+
+	.postBody {
+		grid-row: 2;
+	}
+
+	.postButtons {
+		grid-row: 1 / span 2;
+		grid-column: 1;
+		flex-direction: column;
+	}
+}

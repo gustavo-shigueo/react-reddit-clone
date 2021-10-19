@@ -1,6 +1,9 @@
+import { faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useContext } from 'react'
 import { Post } from '../../interfaces/postInterface'
 import { UserContext } from '../../utils/UserContext'
+import classes from '../../css/PostList.module.css'
 
 interface PostItemProps {
 	post: Post
@@ -17,22 +20,32 @@ const PostItem = ({
 	})
 
 	return (
-		<section className="post-card">
-			<div className="post-header">
+		<section className={classes.postCard}>
+			<div className={classes.postHeader}>
 				<small>
 					{owner.username} - {time}
 				</small>
 			</div>
 
-			<div className="post-body">
+			<div className={classes.postBody}>
 				<h4>{title}</h4>
-				<p>{text.length > 100 ? `${text.substr(0, 100)}...` : text}</p>
+				<p>{text.length > 100 ? `${text.substring(0, 100)}...` : text}</p>
 			</div>
 
-			<div className="post-footer">
-				<button disabled={!user}>upvote</button>
+			<div className={classes.postButtons}>
+				<button disabled={!user}>
+					<FontAwesomeIcon
+						icon={faThumbsUp}
+						style={{ color: 'var(--color-neutral-500)' }}
+					/>
+				</button>
 				{points}
-				<button disabled={!user}>downvote</button>
+				<button disabled={!user}>
+					<FontAwesomeIcon
+						icon={faThumbsDown}
+						style={{ color: 'var(--color-neutral-500)' }}
+					/>
+				</button>
 			</div>
 		</section>
 	)

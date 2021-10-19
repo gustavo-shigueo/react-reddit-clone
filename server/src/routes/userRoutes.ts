@@ -13,7 +13,8 @@ const router = Router()
 
 router.post('/me', isAuth, async (req: Request, res: Response) => {
 	try {
-		const { user } = req.body
+		const { userId } = req.body
+		const user = await UserController.findById(userId)
 		const { id, username, email } = user
 		return res.status(200).json({ user: { id, username, email } })
 	} catch (error) {
