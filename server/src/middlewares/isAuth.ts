@@ -13,7 +13,7 @@ const isAuth = async (req: Request, res: Response, next: NextFunction) => {
 		req.body.userId = payload.id
 		return next()
 	} catch (error) {
-		return res.status(403).json({ error: error.message, user: null })
+		return res.status(401).json({ error: error.message, user: null })
 	}
 }
 

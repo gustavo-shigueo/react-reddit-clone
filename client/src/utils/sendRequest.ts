@@ -29,7 +29,7 @@ export const sendRequest = async ({
 
 	const response = await request(url, options)
 
-	if (auth && response.status === 403) {
+	if (auth && response.status === 401) {
 		const user = await refreshRequest()
 
 		if (!user) return response
