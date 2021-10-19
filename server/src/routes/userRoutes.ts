@@ -65,7 +65,6 @@ router.patch(
 				email,
 				password,
 			})
-			req.body.user = newUser
 			return res.json(newUser)
 		} catch (error) {
 			return next(error)
@@ -100,7 +99,7 @@ router.post(
 	isAuth,
 	(req: Request, res: Response, next: NextFunction) => {
 		try {
-			req.body.user = undefined
+			req.body.userId = undefined
 			setRefreshToken('', res)
 			return res.status(204).end()
 		} catch (error) {
@@ -114,8 +113,8 @@ router.delete(
 	isAuth,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			await UserController.deleteUser(req.body.user)
-			req.body.user = undefined
+			await UserController.deleteUser(req.body.userId)
+			req.body.userId = undefined
 			setRefreshToken('', res)
 			return res.status(204).end()
 		} catch (error) {

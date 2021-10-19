@@ -23,7 +23,7 @@ export class UserController {
 				throw new Error('Password must contain at least 8 characters')
 			}
 
-			const hashedPassword = await bcrypt.hash(password, 12)
+			const hashedPassword = await this.hashPassword(password)
 			const user = await User.create({
 				username,
 				email,
@@ -77,10 +77,13 @@ export class UserController {
 	static async findById(id: string): Promise<UserResponse> {
 		try {
 			if (!id) throw new Error('Please provide an id')
+
 			const user = await User.findByPk(id, {
 				attributes: ['id', 'username', 'email', 'createdAt'],
 			})
+
 			if (!user) throw new Error('User not found')
+
 			return user
 		} catch (error) {
 			throw error
@@ -100,15 +103,19 @@ export class UserController {
 				}
 				user.username = username
 			}
+
 			if (email) user.email = email
+
 			if (password) {
 				if (password.length < 8) {
 					throw new Error('Password must contain at least 8 characters')
 				}
-				user.password = await bcrypt.hash(password, 12)
+
+				user.password = await this.hashPassword(password)
 			}
 
 			await user.save()
+
 			return {
 				id: user.id,
 				username: user.username,
@@ -121,8 +128,19 @@ export class UserController {
 		}
 	}
 
-	static async deleteUser(user: User): Promise<void> {
-		if (!user) throw new Error('Not authorized')
-		return await user.destroy()
+	static async deleteUser(userId: string): Promise<void> {
+		try {
+			if (!userId) throw new Error('ID not provided')
+
+			const deletedRows = await User.destroy({ where: { id: userId } })
+
+			if (deletedRows === 0) throw new Error('User not found')
+		} catch (error) {
+			throw error
+		}
+	}
+
+	private static async hashPassword(password: string): Promise<string> {
+		return bcrypt.hash(password, 12)
 	}
 }

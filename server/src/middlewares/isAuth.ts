@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { validateAccessToken } from '../utils/tokenUtils'
-import { User } from '../models'
+// import { User } from '../models'
 
 const isAuth = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -10,13 +10,10 @@ const isAuth = async (req: Request, res: Response, next: NextFunction) => {
 
 		if (!payload) throw new Error('Not authenticated')
 
-		const user = await User.findByPk(payload.id)
-		if (!user) throw new Error('Not authenticated')
-
-		req.body.user = user
+		req.body.userId = payload.id
 		return next()
 	} catch (error) {
-		return res.json({ user: null })
+		return res.status(403).json({ error: error.message, user: null })
 	}
 }
 

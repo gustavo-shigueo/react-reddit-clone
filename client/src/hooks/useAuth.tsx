@@ -8,7 +8,7 @@ export const useAuth = (user: any, setUser: any) => {
 	useEffect(() => {
 		if (!user?.id) {
 			refreshRequest()
-				.then(u => setUser(u ? u : null))
+				.then(u => setUser(u || null))
 				.catch(() => setUser(null))
 				.finally(() => setFetching(false))
 		} else {
@@ -16,7 +16,7 @@ export const useAuth = (user: any, setUser: any) => {
 				.then(u => {
 					if (!u) {
 						return refreshRequest()
-							.then(me => setUser(me ? me : null))
+							.then(me => setUser(me || null))
 							.catch(() => setUser(null))
 					}
 
