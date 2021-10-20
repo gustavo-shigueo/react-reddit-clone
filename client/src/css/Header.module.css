@@ -26,16 +26,20 @@
 	margin-right: 2rem;
 }
 
-.navbar > a {
+.navbar > a,
+.dropDown a {
 	position: relative;
 }
 
 .navbar > a:hover::before,
-.navbar > a.active::before {
+.navbar > a.active::before,
+.dropDown a.active::before,
+.dropDown a:hover::before {
 	transform: scaleX(1);
 }
 
-.navbar > a::before {
+.navbar > a::before,
+.dropDown a::before {
 	content: '';
 	border-radius: 99px;
 	cursor: pointer;
@@ -47,4 +51,31 @@
 	margin: 0 auto;
 	transform: scaleX(0);
 	transition: transform var(--duration) var(--timing-fn);
+}
+
+.dropDown {
+	font-size: 1.25rem;
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+.dropDown button {
+	font-size: inherit;
+	color: var(--color-neutral-100);
+	background: transparent;
+	border: none;
+}
+
+.dropDownMenu {
+	position: fixed;
+	right: 1.5rem;
+	list-style: none;
+	top: 4rem;
+	background-color: var(--color-neutral-450);
+	padding: 0 1.25rem;
+}
+
+.dropDownMenu li {
+	margin-block: 1.15rem;
 }
