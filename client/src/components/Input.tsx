@@ -46,6 +46,7 @@ const Input = ({
 }: InputProps) => {
 	return (
 		<div className="input-group">
+			<label htmlFor={name}>{label}</label>
 			<input
 				id={name}
 				type={type}
@@ -55,7 +56,6 @@ const Input = ({
 				onChange={onChange}
 				{...props}
 			/>
-			<label htmlFor={name}>{label}</label>
 		</div>
 	)
 }

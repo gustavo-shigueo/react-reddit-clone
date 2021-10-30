@@ -1,6 +1,6 @@
 import { FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router-dom'
-import { Form, Input } from '../'
+import { Form, Input, Button } from '../'
 import { useForm } from '../../hooks/useForm'
 import { User } from '../../interfaces/userInterfaces'
 import { setAccessToken } from '../../utils/acessToken'
@@ -58,7 +58,7 @@ const Login = () => {
 				onChange={handleChange}
 				label="Password"
 			/>
-			<button type="submit">Login</button>
+			<Button text="Login" type="submit"></Button>
 		</Form>
 	)
 }

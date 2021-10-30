@@ -1,6 +1,6 @@
 import { useContext, useState, FormEventHandler } from 'react'
 import { Redirect } from 'react-router-dom'
-import { Form, Input, Textarea } from '..'
+import { Form, Input, Textarea, Button } from '../'
 import { useAuth } from '../../hooks/useAuth'
 import { useForm } from '../../hooks/useForm'
 import { sendRequest } from '../../utils/sendRequest'
@@ -54,7 +54,7 @@ const CreatePost = () => {
 				onChange={handleChange}
 				label="Text"
 			/>
-			<button type="submit">Create Post</button>
+			<Button text="Create Post" type="submit" />
 		</Form>
 	)
 }

@@ -20,14 +20,15 @@ const Textarea = ({
 }: TextareaProps) => {
 	return (
 		<div className="input-group input-textarea">
+			<label htmlFor={name}>{label}</label>
 			<textarea
 				id={name}
 				name={name}
 				value={value}
 				onChange={onChange}
+				style={{ resize: 'vertical', minHeight: '300px' }}
 				{...props}
 			/>
-			<label htmlFor={name}>{label}</label>
 		</div>
 	)
 }
