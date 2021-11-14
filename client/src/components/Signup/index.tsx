@@ -2,22 +2,21 @@ import { FormEvent, useContext } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { Form, Input, Button } from '../'
 import { useForm } from '../../hooks/useForm'
-import { User } from '../../interfaces/userInterfaces'
-import { setAccessToken } from '../../utils/acessToken'
-import { getResponseHeaders } from '../../utils/getResponseHeaders'
 import { sendRequest } from '../../utils/sendRequest'
 import { UserContext } from '../../utils/UserContext'
 
 interface FormData {
-	emailOrUsername: string
+	email: string
+	username: string
 	password: string
 }
 
-const Login = () => {
-	const { user, setUser }: any = useContext(UserContext)
+const Signup = () => {
+	const { user }: any = useContext(UserContext)
 
 	const [values, handleChange] = useForm<FormData>({
-		emailOrUsername: '',
+		email: '',
+		username: '',
 		password: '',
 	})
 
@@ -25,31 +24,37 @@ const Login = () => {
 		return <Redirect to="/"></Redirect>
 	}
 
-	const loginSubmit = async (e: FormEvent<HTMLFormElement>) => {
+	const signupSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
 		const response = await sendRequest({
 			method: 'POST',
-			path: '/login',
+			path: '/register',
 			body: values,
 		})
 
-		const data: User = await response.json()
-		if (data?.id) {
-			const { authorization: token } = getResponseHeaders(response)
-			setUser(data)
-			setAccessToken(token)
+		if (response.status === 201) {
+			return <Redirect to="/login"></Redirect>
 		}
+
+		alert((await response.json()).message)
 	}
 
 	return (
-		<Form onSubmit={loginSubmit} method="POST">
+		<Form onSubmit={signupSubmit} method="POST">
+			<Input
+				type="email"
+				name="email"
+				value={values.email}
+				onChange={handleChange}
+				label="E-mail"
+			/>
 			<Input
 				type="text"
-				name="emailOrUsername"
-				value={values.emailOrUsername}
+				name="username"
+				value={values.username}
 				onChange={handleChange}
-				label="E-mail or Username"
+				label="Username"
 			/>
 			<Input
 				type="password"
@@ -59,11 +64,11 @@ const Login = () => {
 				label="Password"
 			/>
 			<Button type="button" variant="secondary" className="mr-1">
-				<Link to="/signup">Signup</Link>
+				<Link to="/login">Back to login</Link>
 			</Button>
-			<Button text="Login" type="submit" />
+			<Button text="Signup" type="submit" />
 		</Form>
 	)
 }
 
-export default Login
+export default Signup

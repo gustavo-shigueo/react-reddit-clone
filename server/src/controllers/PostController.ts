@@ -5,6 +5,7 @@ export class PostController {
 	static async getPosts(lastPostDate: any = new Date(), limit = 10) {
 		try {
 			const limitPlusOne = limit + 1
+
 			const posts = await Post.findAll({
 				order: [['createdAt', 'DESC']],
 				include: [{ model: User, as: 'owner', attributes: ['id', 'username'] }],
@@ -13,6 +14,7 @@ export class PostController {
 					createdAt: { [Op.lt]: lastPostDate },
 				} as any,
 			})
+
 			return {
 				posts: posts.slice(0, limit).map(post => {
 					const snippet = post.text.substring(0, 50).trim()

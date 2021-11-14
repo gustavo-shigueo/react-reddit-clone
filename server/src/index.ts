@@ -4,6 +4,13 @@ import { join } from 'path'
 import routes from './routes'
 import { sequelize } from './models'
 import cors from 'cors'
+import InvalidArgumentError from './Errors/InvalidArgumentError'
+import ArgumentNotProvidedError from './Errors/ArgumentNotProvidedError'
+import NotFoundError from './Errors/NotFoundError'
+import TokenError from './Errors/TokenError'
+import NotAuthorizedError from './Errors/NotAuthorized'
+import InvalidCredentialsError from './Errors/InvalidCredentialsError'
+import { UniqueConstraintError } from 'sequelize'
 
 dotenv.config({
 	path: join(__dirname, '../.env'),
@@ -30,7 +37,26 @@ app.use(
 
 routes(app)
 
-app.use((_err: any, _req: any, res: any, _next: any) => res.end())
+app.use((err: Error, _req: any, res: any, _next: any) => {
+	let status = 500
+	let { message } = err
+
+	if (err instanceof UniqueConstraintError) {
+		message = err.errors[0].message.replace(
+			'must be unique',
+			'is already taken'
+		)
+		status = 400
+	}
+	if (err instanceof InvalidArgumentError) status = 400
+	if (err instanceof ArgumentNotProvidedError) status = 400
+	if (err instanceof NotAuthorizedError) status = 401
+	if (err instanceof InvalidCredentialsError) status = 401
+	if (err instanceof TokenError) status = 401
+	if (err instanceof NotFoundError) status = 404
+
+	res.status(status).send({ message })
+})
 
 app.listen(process.env.PORT, () =>
 	console.log('API iniciada', process.env.PORT)

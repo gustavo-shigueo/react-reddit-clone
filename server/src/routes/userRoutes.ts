@@ -8,6 +8,8 @@ import {
 	validateRefreshToken,
 } from '../utils/tokenUtils'
 import { isAuth } from '../middlewares/isAuth'
+import TokenError from '../Errors/TokenError'
+import InvalidCredentialsError from '../Errors/InvalidCredentialsError'
 
 const router = Router()
 
@@ -16,7 +18,7 @@ router.post('/me', isAuth, async (req: Request, res: Response) => {
 		const { userId } = req.body
 		const user = await UserController.findById(userId)
 		const { id, username, email } = user
-		return res.status(200).json({ user: { id, username, email } })
+		return res.json({ user: { id, username, email } })
 	} catch (error) {
 		return res.json({ user: null })
 	}
@@ -26,9 +28,7 @@ router.post(
 	'/register',
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const {
-				body: { email, username, password },
-			} = req
+			const { email, username, password } = req.body
 			const user = await UserController.addUser({ username, email, password })
 			return res.status(201).json(user)
 		} catch (error) {
@@ -39,18 +39,19 @@ router.post(
 
 router.post(
 	'/login',
-	async (req: Request, res: Response, _next: NextFunction) => {
+	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const {
-				body: { emailOrUsername, password },
-			} = req
+			const { emailOrUsername, password } = req.body
+
 			const user = await UserController.login({ emailOrUsername, password })
-			if (!user) throw new Error('Not Authorized')
+			if (!user) throw new InvalidCredentialsError()
+
 			setAccessToken(createAccessToken(user), res)
 			setRefreshToken(createRefreshToken(user), res)
+
 			return res.json(user)
 		} catch (error) {
-			return res.json(error)
+			return next(error)
 		}
 	}
 )
@@ -78,7 +79,7 @@ router.post(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const refreshToken = req.headers.cookie?.substr(4)
-			if (!refreshToken) throw new Error('Token is invalid or expired')
+			if (!refreshToken) throw new TokenError()
 			const {
 				user,
 				accessToken,

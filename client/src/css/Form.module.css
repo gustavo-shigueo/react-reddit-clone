@@ -33,4 +33,5 @@
 	padding: 8px;
 	border-radius: 5px;
 	color: white;
+	box-shadow: 2px 2px 5px 0 hsl(0 0% 0% / 0.25);
 }

@@ -7,6 +7,11 @@ import {
 	UserResponse,
 	UserUpdateInfo,
 } from '../interfaces/UserInterfaces'
+import NotFoundError from '../Errors/NotFoundError'
+import ArgumentNotProvidedError from '../Errors/ArgumentNotProvidedError'
+import InvalidArgumentError from '../Errors/InvalidArgumentError'
+import NotAuthorizedError from '../Errors/NotAuthorized'
+import InvalidCredentialsError from '../Errors/InvalidCredentialsError'
 
 export class UserController {
 	static async addUser({
@@ -16,11 +21,13 @@ export class UserController {
 	}: UserInfo): Promise<UserResponse> {
 		try {
 			if (username.includes('@')) {
-				throw new Error('Username cannot contain an "@" symbol')
+				throw new InvalidArgumentError('Username cannot contain an "@" symbol')
 			}
 
 			if (password.length < 8) {
-				throw new Error('Password must contain at least 8 characters')
+				throw new InvalidArgumentError(
+					'Password must contain at least 8 characters'
+				)
 			}
 
 			const hashedPassword = await this.hashPassword(password)
@@ -49,7 +56,7 @@ export class UserController {
 	}: LoginInfo): Promise<UserResponse> {
 		try {
 			if (!emailOrUsername) {
-				throw new Error('Please enter an email or a username')
+				throw new ArgumentNotProvidedError('E-mail or username')
 			}
 
 			const user = await User.findOne({
@@ -57,10 +64,10 @@ export class UserController {
 					[Op.or]: { email: emailOrUsername, username: emailOrUsername },
 				},
 			})
-			if (!user) throw new Error('Invalid credentials')
+			if (!user) throw new InvalidCredentialsError()
 
 			const validPassword = await bcrypt.compare(password, user.password)
-			if (!validPassword) throw new Error('Invalid credentials')
+			if (!validPassword) throw new InvalidCredentialsError()
 
 			return {
 				id: user.id,
@@ -76,13 +83,13 @@ export class UserController {
 
 	static async findById(id: string): Promise<UserResponse> {
 		try {
-			if (!id) throw new Error('Please provide an id')
+			if (!id) throw new ArgumentNotProvidedError('ID')
 
 			const user = await User.findByPk(id, {
 				attributes: ['id', 'username', 'email', 'createdAt'],
 			})
 
-			if (!user) throw new Error('User not found')
+			if (!user) throw new NotFoundError('User')
 
 			return user
 		} catch (error) {
@@ -95,11 +102,13 @@ export class UserController {
 		{ username, email, password }: UserUpdateInfo
 	): Promise<UserResponse> {
 		try {
-			if (!user) throw new Error('Not authorized')
+			if (!user) throw new NotAuthorizedError()
 
 			if (username) {
 				if (username.includes('@')) {
-					throw new Error('Username cannot contain an "@" symbol')
+					throw new InvalidArgumentError(
+						'Username cannot contain an "@" symbol'
+					)
 				}
 				user.username = username
 			}
@@ -108,7 +117,9 @@ export class UserController {
 
 			if (password) {
 				if (password.length < 8) {
-					throw new Error('Password must contain at least 8 characters')
+					throw new InvalidArgumentError(
+						'Password must contain at least 8 characters'
+					)
 				}
 
 				user.password = await this.hashPassword(password)
@@ -130,11 +141,11 @@ export class UserController {
 
 	static async deleteUser(userId: string): Promise<void> {
 		try {
-			if (!userId) throw new Error('ID not provided')
+			if (!userId) throw new ArgumentNotProvidedError('ID')
 
 			const deletedRows = await User.destroy({ where: { id: userId } })
 
-			if (deletedRows === 0) throw new Error('User not found')
+			if (deletedRows === 0) throw new NotFoundError('User')
 		} catch (error) {
 			throw error
 		}
