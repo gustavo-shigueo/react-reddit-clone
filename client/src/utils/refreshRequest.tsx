@@ -7,5 +7,8 @@ export const refreshRequest = async (): Promise<User | null> => {
 	const response = await sendRequest({ method: 'POST', path: '/refresh' })
 	const { authorization: token } = getResponseHeaders(response)
 	setAccessToken(token)
-	return await response.json().catch(() => null)
+
+	const data = response.ok ? await response.json() : null
+
+	return data
 }

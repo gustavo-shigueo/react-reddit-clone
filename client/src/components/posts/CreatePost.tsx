@@ -1,25 +1,24 @@
-import { useContext, useState, FormEventHandler } from 'react'
+import { useState, FormEventHandler } from 'react'
 import { Redirect } from 'react-router-dom'
 import { Form, Input, Textarea, Button } from '../'
-import { useAuth } from '../../hooks/useAuth'
 import { useForm } from '../../hooks/useForm'
 import { sendRequest } from '../../utils/sendRequest'
-import { UserContext } from '../../utils/UserContext'
+import { useAuth } from '../../utils/UserContext'
 
 interface FormData {
 	title: string
 	text: string
 }
 const CreatePost = () => {
-	const { user, setUser }: any = useContext(UserContext)
-	const fetching = useAuth(user, setUser)
+	const { currentUser, fetchUser, fetchingUser } = useAuth()
 	const [values, handleChange] = useForm<FormData>({
 		title: '',
 		text: '',
 	})
 	const [formSent, setFormSent] = useState(false)
 
-	if (!user && !fetching) return <Redirect to="/login" />
+	if (!currentUser) fetchUser()
+	if (!currentUser && !fetchingUser) return <Redirect to="/login" />
 	if (formSent) window.location.href = '/'
 
 	const postSubmit: FormEventHandler<HTMLFormElement> = async e => {

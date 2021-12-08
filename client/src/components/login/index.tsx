@@ -1,12 +1,8 @@
-import { FormEvent, useContext } from 'react'
+import { FormEvent } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { Form, Input, Button } from '../'
 import { useForm } from '../../hooks/useForm'
-import { User } from '../../interfaces/userInterfaces'
-import { setAccessToken } from '../../utils/acessToken'
-import { getResponseHeaders } from '../../utils/getResponseHeaders'
-import { sendRequest } from '../../utils/sendRequest'
-import { UserContext } from '../../utils/UserContext'
+import { useAuth } from '../../utils/UserContext'
 
 interface FormData {
 	emailOrUsername: string
@@ -14,32 +10,23 @@ interface FormData {
 }
 
 const Login = () => {
-	const { user, setUser }: any = useContext(UserContext)
+	const { login, currentUser } = useAuth()
 
 	const [values, handleChange] = useForm<FormData>({
 		emailOrUsername: '',
 		password: '',
 	})
 
-	if (user) {
+	if (currentUser) {
 		return <Redirect to="/"></Redirect>
 	}
 
 	const loginSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		const response = await sendRequest({
-			method: 'POST',
-			path: '/login',
-			body: values,
-		})
+		if (!values.emailOrUsername || !values.password) return
 
-		const data: User = await response.json()
-		if (data?.id) {
-			const { authorization: token } = getResponseHeaders(response)
-			setUser(data)
-			setAccessToken(token)
-		}
+		await login(values)
 	}
 
 	return (

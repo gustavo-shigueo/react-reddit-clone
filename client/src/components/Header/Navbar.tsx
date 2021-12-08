@@ -12,7 +12,7 @@ const Navbar = ({ user, location }: NavbarProps) => {
 			<Link to="/" className={location.pathname === '/' ? classes.active : ''}>
 				Home
 			</Link>
-			{user ? (
+			{user != null ? (
 				<>
 					<Link
 						to="/create-post"

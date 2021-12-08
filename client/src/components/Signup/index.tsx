@@ -1,9 +1,8 @@
-import { FormEvent, useContext } from 'react'
+import { FormEvent } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { Form, Input, Button } from '../'
 import { useForm } from '../../hooks/useForm'
-import { sendRequest } from '../../utils/sendRequest'
-import { UserContext } from '../../utils/UserContext'
+import { useAuth } from '../../utils/UserContext'
 
 interface FormData {
 	email: string
@@ -12,7 +11,7 @@ interface FormData {
 }
 
 const Signup = () => {
-	const { user }: any = useContext(UserContext)
+	const { currentUser, signup } = useAuth()
 
 	const [values, handleChange] = useForm<FormData>({
 		email: '',
@@ -20,24 +19,16 @@ const Signup = () => {
 		password: '',
 	})
 
-	if (user) {
+	if (currentUser) {
 		return <Redirect to="/"></Redirect>
 	}
 
 	const signupSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		const response = await sendRequest({
-			method: 'POST',
-			path: '/register',
-			body: values,
-		})
+		if (!values.email || !values.username || !values.password) return
 
-		if (response.status === 201) {
-			return <Redirect to="/login"></Redirect>
-		}
-
-		alert((await response.json()).message)
+		return await signup(values)
 	}
 
 	return (

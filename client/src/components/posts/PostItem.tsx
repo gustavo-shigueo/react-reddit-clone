@@ -1,8 +1,7 @@
 import { faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext } from 'react'
 import { Post } from '../../interfaces/postInterface'
-import { UserContext } from '../../utils/UserContext'
+import { useAuth } from '../../utils/UserContext'
 import classes from '../../css/PostList.module.css'
 
 interface PostItemProps {
@@ -12,7 +11,7 @@ interface PostItemProps {
 const PostItem = ({
 	post: { createdAt, title, text, points, owner },
 }: PostItemProps) => {
-	const { user }: any = useContext(UserContext)
+	const { currentUser } = useAuth()
 
 	const time = new Date(createdAt).toLocaleString('pt-BR', {
 		dateStyle: 'short',
@@ -33,14 +32,14 @@ const PostItem = ({
 			</div>
 
 			<div className={classes.postButtons}>
-				<button disabled={!user}>
+				<button disabled={!currentUser}>
 					<FontAwesomeIcon
 						icon={faThumbsUp}
 						style={{ color: 'var(--color-neutral-500)' }}
 					/>
 				</button>
 				{points}
-				<button disabled={!user}>
+				<button disabled={!currentUser}>
 					<FontAwesomeIcon
 						icon={faThumbsDown}
 						style={{ color: 'var(--color-neutral-500)' }}
